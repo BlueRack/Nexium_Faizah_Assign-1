@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { toast } from "sonner";
 import { X } from "lucide-react";
@@ -44,7 +43,7 @@ export default function FavouritesPage() {
               key={index}
               className="relative p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-pink-500"
             >
-              <p className="italic pr-8">"{quote}"</p>
+              <p className="italic pr-8">&quot;{quote}&quot;</p>
               <button
                 onClick={() => handleRemove(quote)}
                 className="absolute top-2 right-2 text-pink-400 hover:text-pink-200 transition"

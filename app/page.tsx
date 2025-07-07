@@ -189,7 +189,7 @@ export default function Home() {
                 key={index}
                 className="relative p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-purple-500"
               >
-                <p className="italic pr-10">"{quote}"</p>
+                <p className="italic pr-10">&quot;{quote}&quot;</p>
                 {randomTopic && (
                   <p className="text-right text-xs text-gray-400 mt-1">Topic: {randomTopic}</p>
                 )}
