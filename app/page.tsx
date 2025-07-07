@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -32,11 +32,21 @@ const quotes = [
 	},
 ];
 
+
+
+
+
 export default function Home() {
 	const [topic, setTopic] = useState("");
 	const [filteredQuotes, setFilteredQuotes] = useState<string[]>([]);
 	const [submitted, setSubmitted] = useState(false);
+	const [mounted, setMounted] = useState(false);
 
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	if (!mounted) return null;
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		setSubmitted(true);
