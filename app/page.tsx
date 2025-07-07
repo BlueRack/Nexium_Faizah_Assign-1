@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
 
-// Local quotes array
+// Quotes array
 const quotes = [
   { topic: "success", text: "Success is not final, failure is not fatal: It is the courage to continue that counts." },
   { topic: "success", text: "Don’t watch the clock; do what it does. Keep going." },
@@ -21,6 +21,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [randomTopic, setRandomTopic] = useState("");
+  const [favourites, setFavourites] = useState<string[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -56,6 +57,12 @@ export default function Home() {
     });
   };
 
+  const addToFavourites = (quote: string) => {
+    if (!favourites.includes(quote)) {
+      setFavourites([...favourites, quote]);
+    }
+  };
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-gradient-to-br from-black via-gray-900 to-purple-900 animate-gradient-x text-white transition-colors duration-1000">
       <div className="max-w-md w-full space-y-6">
@@ -75,31 +82,31 @@ export default function Home() {
         </div>
 
         <form className="space-y-4" onSubmit={handleSubmit}>
-			<Input
-				type="text"
-				placeholder="Enter a topic e.g. success"
-				value={topic}
-				onChange={(e) => setTopic(e.target.value)}
-			/>
-			<Button type="submit" className="w-full">
-				Get Quotes
-			</Button>
-			<Button
-				type="button"
-				onClick={handleSurprise}
-				className="w-full bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold shadow-md hover:scale-105 transition-transform duration-200"
-			>
-				🎉 Surprise Me
-			</Button>
-			</form>
+          <Input
+            type="text"
+            placeholder="Enter a topic e.g. success"
+            value={topic}
+            onChange={(e) => setTopic(e.target.value)}
+          />
+          <Button type="submit" className="w-full">
+            Get Quotes
+          </Button>
+          <Button
+            type="button"
+            onClick={handleSurprise}
+            className="w-full bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold shadow-md hover:scale-105 transition-transform duration-200"
+          >
+            🎉 Surprise Me
+          </Button>
+        </form>
 
-
+        {/* Display quotes */}
         <div className="space-y-2">
           {filteredQuotes.length > 0 ? (
             filteredQuotes.map((quote, index) => (
               <div
                 key={index}
-                className="p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-purple-500"
+                className="p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-purple-500 space-y-1"
               >
                 <p className="italic">"{quote}"</p>
                 {randomTopic && (
@@ -107,6 +114,14 @@ export default function Home() {
                     Topic: {randomTopic}
                   </p>
                 )}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => addToFavourites(quote)}
+                  className="text-xs text-purple-300 hover:text-purple-500"
+                >
+                  ⭐ Add to Favourites
+                </Button>
               </div>
             ))
           ) : (
@@ -117,6 +132,21 @@ export default function Home() {
             )
           )}
         </div>
+
+        {/* Favourites section */}
+        {favourites.length > 0 && (
+          <div className="mt-6 space-y-2">
+            <h2 className="text-xl font-semibold text-pink-300">⭐ Your Favourites</h2>
+            {favourites.map((fav, idx) => (
+              <div
+                key={idx}
+                className="p-3 bg-white/10 rounded text-sm border-l-4 border-pink-500"
+              >
+                "{fav}"
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </main>
   );
