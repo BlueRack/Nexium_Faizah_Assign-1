@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import confetti from "canvas-confetti";
+import { Copy } from "lucide-react"; 
 
-// Quotes array
 const quotes = [
   { topic: "success", text: "Success is not final, failure is not fatal: It is the courage to continue that counts." },
   { topic: "success", text: "Don’t watch the clock; do what it does. Keep going." },
@@ -21,7 +21,7 @@ export default function Home() {
   const [submitted, setSubmitted] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [randomTopic, setRandomTopic] = useState("");
-  const [favourites, setFavourites] = useState<string[]>([]);
+  const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -32,7 +32,6 @@ export default function Home() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    setRandomTopic("");
 
     const results = quotes
       .filter((q) => q.topic.toLowerCase() === topic.toLowerCase())
@@ -40,6 +39,7 @@ export default function Home() {
       .map((q) => q.text);
 
     setFilteredQuotes(results);
+    setRandomTopic("");
   };
 
   const handleSurprise = () => {
@@ -57,10 +57,10 @@ export default function Home() {
     });
   };
 
-  const addToFavourites = (quote: string) => {
-    if (!favourites.includes(quote)) {
-      setFavourites([...favourites, quote]);
-    }
+  const handleCopy = (text: string, index: number) => {
+    navigator.clipboard.writeText(text);
+    setCopiedIndex(index);
+    setTimeout(() => setCopiedIndex(null), 1500);
   };
 
   return (
@@ -73,11 +73,10 @@ export default function Home() {
           <div className="text-base md:text-lg text-gray-400 font-medium leading-relaxed space-y-1">
             <p>Need a boost of inspiration?</p>
             <p>
-              Just type in a topic — like{" "}
-              <span className="italic text-purple-400">success</span> or{" "}
+              Type a topic — like <span className="italic text-purple-400">success</span> or{" "}
               <span className="italic text-blue-400">life</span>.
             </p>
-            <p>Or try your luck below ✨</p>
+            <p>Or click “Surprise Me” ✨</p>
           </div>
         </div>
 
@@ -88,40 +87,43 @@ export default function Home() {
             value={topic}
             onChange={(e) => setTopic(e.target.value)}
           />
-          <Button type="submit" className="w-full">
-            Get Quotes
-          </Button>
-          <Button
-            type="button"
-            onClick={handleSurprise}
-            className="w-full bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 text-white font-bold shadow-md hover:scale-105 transition-transform duration-200"
-          >
-            🎉 Surprise Me
-          </Button>
+          <div className="flex gap-2">
+            <Button type="submit" className="w-full">
+              Get Quotes
+            </Button>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={handleSurprise}
+              className="bg-gradient-to-r from-pink-600 via-purple-500 to-indigo-500 text-white hover:opacity-90"
+            >
+              Surprise Me
+            </Button>
+          </div>
         </form>
 
-        {/* Display quotes */}
         <div className="space-y-2">
           {filteredQuotes.length > 0 ? (
             filteredQuotes.map((quote, index) => (
               <div
                 key={index}
-                className="p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-purple-500 space-y-1"
+                className="relative p-4 bg-white/10 backdrop-blur-md shadow-lg rounded text-sm border-l-4 border-purple-500"
               >
-                <p className="italic">"{quote}"</p>
+                <p className="italic pr-8">"{quote}"</p>
                 {randomTopic && (
-                  <p className="text-right text-xs text-gray-400 mt-1">
-                    Topic: {randomTopic}
-                  </p>
+                  <p className="text-right text-xs text-gray-400 mt-1">Topic: {randomTopic}</p>
                 )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => addToFavourites(quote)}
-                  className="text-xs text-purple-300 hover:text-purple-500"
+                <button
+                  onClick={() => handleCopy(quote, index)}
+                  className="absolute top-2 right-2 text-purple-400 hover:text-purple-200 transition"
+                  aria-label="Copy quote"
                 >
-                  ⭐ Add to Favourites
-                </Button>
+                  {copiedIndex === index ? (
+                    <span className="text-xs font-medium">✔</span>
+                  ) : (
+                    <Copy size={16} />
+                  )}
+                </button>
               </div>
             ))
           ) : (
@@ -132,21 +134,6 @@ export default function Home() {
             )
           )}
         </div>
-
-        {/* Favourites section */}
-        {favourites.length > 0 && (
-          <div className="mt-6 space-y-2">
-            <h2 className="text-xl font-semibold text-pink-300">⭐ Your Favourites</h2>
-            {favourites.map((fav, idx) => (
-              <div
-                key={idx}
-                className="p-3 bg-white/10 rounded text-sm border-l-4 border-pink-500"
-              >
-                "{fav}"
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </main>
   );
