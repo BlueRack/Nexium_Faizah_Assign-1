@@ -62,4 +62,7 @@ export default function FavouritesPage() {
       </div>
     </main>
   );
+
+
+
 }
